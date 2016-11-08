@@ -2995,6 +2995,10 @@ std::vector<Option> get_global_options() {
     .set_default(false)
     .set_description(""),
 
+    Option("osd_async_recovery_max_updates", Option::TYPE_UINT, Option::LEVEL_ADVANCED)
+    .set_default(200)
+    .set_description("switch from sync to async recovery if beyond this num of updates"),
+
     Option("osd_bench_small_size_max_iops", Option::TYPE_UINT, Option::LEVEL_ADVANCED)
     .set_default(100)
     .set_description(""),
