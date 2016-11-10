@@ -3940,6 +3940,12 @@ public:
       rm(p);
   }
 
+  void rm(const hobject_t& oid) {
+    std::map<hobject_t, item>::iterator p = missing.find(oid);
+    if (p != missing.end())
+      rm(p);
+  }
+
   void rm(std::map<hobject_t, item>::const_iterator m) {
     tracker.changed(m->first);
     rmissing.erase(m->second.need.version);

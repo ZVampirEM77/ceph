@@ -668,8 +668,18 @@ public:
     missing.revise_have(oid, have);
   }
 
+  void revise_need(hobject_t oid, eversion_t need) {
+    missing.revise_need(oid, need, false);
+  }
+
   void missing_add(const hobject_t& oid, eversion_t need, eversion_t have) {
     missing.add(oid, need, have, false);
+  }
+
+  void missing_rm(const hobject_t& oid) {
+    map<hobject_t, pg_missing_item>::const_iterator p
+        = missing.get_items().find(oid);
+    missing.rm(p);
   }
 
   //////////////////// get or set log ////////////////////
