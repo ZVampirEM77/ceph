@@ -11469,10 +11469,9 @@ bool PrimaryLogPG::start_recovery_ops(
   }
 
   if (needs_recovery()) {
-    // this shouldn't happen!
-    // We already checked num_missing() so we must have missing replicas
-    osd->clog->error() << info.pgid 
-                       << " Unexpected Error: recovery ending with missing replicas";
+    // This is possible when an object is missing on the async recovery
+    // targets and the recovery lock can't be acquired. In this case,
+    // no recovery may start, and we still have missings on replicas.
     return work_in_progress;
   }
 
