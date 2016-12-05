@@ -649,7 +649,9 @@ bool PrimaryLogPG::is_degraded_or_backfilling_object(const hobject_t& soid)
 
 void PrimaryLogPG::wait_for_degraded_object(const hobject_t& soid, OpRequestRef op)
 {
-  assert(is_degraded_or_backfilling_object(soid) || is_missing_have_old_object(soid));
+  assert(is_degraded_or_backfilling_object(soid) ||
+         is_missing_have_old_object(soid) ||
+         is_degraded_on_async_recovery_target_object(soid));
 
   maybe_kick_recovery(soid);
   waiting_for_degraded_object[soid].push_back(op);
@@ -657,7 +659,7 @@ void PrimaryLogPG::wait_for_degraded_object(const hobject_t& soid, OpRequestRef 
 }
 
 // have old version of this object on the async recovery targets?
-bool ReplicatedPG::is_missing_have_old_object(const hobject_t& soid)
+bool PrimaryLogPG::is_missing_have_old_object(const hobject_t& soid)
 {
   for (set<pg_shard_t>::iterator i = actingbackfill.begin();
        i != actingbackfill.end();
@@ -668,6 +670,22 @@ bool ReplicatedPG::is_missing_have_old_object(const hobject_t& soid)
     if (peer_missing.count(peer) &&
 	peer_missing[peer].get_items().count(soid) &&
 	peer_missing[peer].have_old(soid) != eversion_t())
+      return true;
+  }
+  return false;
+}
+
+// is the object degraded on the async recovery targets?
+bool PrimaryLogPG::is_degraded_on_async_recovery_target_object(const hobject_t& soid)
+{
+  for (set<pg_shard_t>::iterator i = actingbackfill.begin();
+       i != actingbackfill.end();
+       ++i) {
+    if (*i == get_primary()) continue;
+    if (actingset.count(*i)) continue;
+    pg_shard_t peer = *i;
+    if (peer_missing.count(peer) &&
+	peer_missing[peer].get_items().count(soid))
       return true;
   }
   return false;
@@ -7072,7 +7090,8 @@ int PrimaryLogPG::_rollback_to(OpContext *ctx, ceph_osd_op& op)
     assert(0 == "unexpected error code in _rollback_to");
   } else { //we got our context, let's use it to do the rollback!
     hobject_t& rollback_to_sobject = rollback_to->obs.oi.soid;
-    if (is_degraded_or_backfilling_object(rollback_to_sobject)) {
+    if (is_degraded_or_backfilling_object(rollback_to_sobject) ||
+	is_degraded_on_async_recovery_target_object(rollback_to_sobject)) {
       dout(20) << "_rollback_to attempted to roll back to a degraded object "
 	       << rollback_to_sobject << " (requested snapid: ) " << snapid << dendl;
       block_write_on_degraded_snap(rollback_to_sobject, ctx->op);
