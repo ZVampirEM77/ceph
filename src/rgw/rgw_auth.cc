@@ -256,6 +256,23 @@ uint32_t RGWLocalAuthApplier::get_perm_mask(const std::string& subuser_name,
   }
 }
 
+
+void RGWLocalAuthApplier::modify_request_state(req_state * s) const       /* in/out */
+{
+  if (!subuser.empty() && subuser != NO_SUBUSER) {
+    const auto iter = user_info.subusers.find(subuser);
+
+    if (iter != std::end(user_info.subusers)) {
+      s->subuser_name = iter->second.name;
+    }
+    else
+    {
+      dout(0) << "NOTICE: could not find subuser: " << subuser << dendl;
+    }
+  }
+}
+
+
 void RGWLocalAuthApplier::load_acct_info(RGWUserInfo& user_info) const      /* out */
 {
   /* Load the account that belongs to the authenticated identity. An extra call

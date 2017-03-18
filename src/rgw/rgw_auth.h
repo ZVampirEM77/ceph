@@ -215,6 +215,8 @@ public:
   uint32_t get_perm_mask() const override {
     return get_perm_mask(subuser, user_info);
   }
+  
+  virtual void modify_request_state(req_state * s) const override;
   void to_str(std::ostream& out) const override;
   void load_acct_info(RGWUserInfo& user_info) const override; /* out */
 
