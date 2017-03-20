@@ -42,6 +42,7 @@ librgw_la_SOURCES = \
 	rgw/rgw_frontend.cc \
 	rgw/rgw_gc.cc \
         rgw/rgw_bl.cc \
+        rgw/rgw_bl_s3.cc \
 	rgw/rgw_http_client.cc \
 	rgw/rgw_json_enc.cc \
 	rgw/rgw_keystone.cc \
@@ -211,6 +212,7 @@ noinst_HEADERS += \
 	rgw/rgw_policy_s3.h \
 	rgw/rgw_gc.h \
         rgw/rgw_bl.h \
+        rgw/rgw_bl_s3.h \
 	rgw/rgw_metadata.h \
 	rgw/rgw_meta_sync_status.h \
 	rgw/rgw_multi_del.h \

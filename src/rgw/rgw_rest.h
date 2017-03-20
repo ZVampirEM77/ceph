@@ -277,6 +277,20 @@ public:
   virtual int get_params();
 };
 
+class RGWGetBL_ObjStore : public RGWGetBL {
+public:
+  RGWGetBL_ObjStore() {}
+  ~RGWGetBL_ObjStore() override {}
+};
+
+class RGWPutBL_ObjStore : public RGWPutBL {
+public:
+  RGWPutBL_ObjStore() {}
+  ~RGWPutBL_ObjStore() override {}
+
+  int get_params() override;
+};
+
 class RGWGetCORS_ObjStore : public RGWGetCORS {
 public:
   RGWGetCORS_ObjStore() {}

@@ -34,6 +34,7 @@
 #include "rgw_acl.h"
 #include "rgw_cors.h"
 #include "rgw_quota.h"
+#include "rgw_bl.h"
 
 #include "include/assert.h"
 
@@ -405,16 +406,51 @@ public:
   virtual bool need_container_stats() { return false; }
 };
 
-class RGWGetBucketLogging : public RGWOp {
+class RGWGetBL : public RGWOp {
 public:
-  RGWGetBucketLogging() {}
-  int verify_permission();
-  void execute() { }
+  RGWGetBL() {}
+  int verify_permission() override;
+  void pre_exec() override;
+  void execute() override { }
 
   virtual void send_response() = 0;
   virtual const string name() { return "get_bucket_logging"; }
   virtual RGWOpType get_type() { return RGW_OP_GET_BUCKET_LOGGING; }
   virtual uint32_t op_mask() { return RGW_OP_TYPE_READ; }
+};
+
+class RGWPutBL : public RGWOp {
+protected:
+  size_t len;
+  char *data;
+  string cookie;
+
+public:
+  RGWPutBL() {
+    len = 0;
+    data = NULL;
+  }
+  ~RGWPutBL() override {
+    free(data);
+  }
+
+  void init(RGWRados *store, struct req_state *s, RGWHandler *dialect_handler) override {
+#define BL_COOKIE_LEN 16
+    char buf[BL_COOKIE_LEN + 1];
+
+    RGWOp::init(store, s, dialect_handler);
+    gen_rand_alphanumeric(s->cct, buf, sizeof(buf) - 1);
+    cookie = buf;
+  }
+
+  int verify_permission() override;
+  void pre_exec() override;
+  void execute() override;
+
+  virtual int get_params() = 0;
+  void send_response() override = 0;
+  const string name() override { return "put_bucket_logging"; }
+  uint32_t op_mask() override { return RGW_OP_TYPE_WRITE; }
 };
 
 class RGWGetBucketLocation : public RGWOp {
