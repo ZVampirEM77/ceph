@@ -1907,17 +1907,18 @@ void RGWPutBL::execute()
       break;
     } else {
       if (new_status.is_enabled()) {
-        op_ret = cls_rgw_bl_set_entry(*ctx, oid, entry);
-         if (op_ret < 0) {
-           dout(0) << "RGWPutBL() failed to set entry:"
-                   << " oid=" << oid << " ret=" << op_ret << dendl;
-         }
+	op_ret = cls_rgw_bl_set_entry(*ctx, oid, entry);
+	if (op_ret < 0) {
+	  dout(0) << "RGWPutBL() failed to set entry:"
+		  << " oid=" << oid << " ret=" << op_ret << dendl;     
+	}
       } else {
-        op_ret = cls_rgw_bl_rm_entry(*ctx, oid, entry);
-         if (op_ret < 0) {
-           dout(0) << "RGWPutBL() failed to rm entry:"
-                   << " oid=" << oid << " ret=" << op_ret << dendl;
-         }
+	op_ret = cls_rgw_bl_rm_entry(*ctx, oid, entry);
+	if (op_ret < 0) {
+	  dout(0) << "RGWPutBL() failed to rm entry:" 
+		  << " oid=" << oid << " ret=" << op_ret << dendl;     
+	}
+
       }
     }
     break;
