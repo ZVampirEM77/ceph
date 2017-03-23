@@ -4252,12 +4252,13 @@ int RGWRados::list_buckets_next(RGWObjEnt& obj, RGWAccessHandle *handle)
 /**** logs ****/
 
 struct log_list_state {
-  string prefix;
+  string filter;
+  bool filter_by_date; // FIXME avoid racy when opslog be delivering is also be appending.
   librados::IoCtx io_ctx;
   librados::NObjectIterator obit;
 };
 
-int RGWRados::log_list_init(const string& prefix, RGWAccessHandle *handle)
+int RGWRados::log_list_init(const string& filter, RGWAccessHandle *handle, const bool filter_by_date)
 {
   log_list_state *state = new log_list_state;
   const char *log_pool = get_zone_params().log_pool.name.c_str();
@@ -4267,7 +4268,8 @@ int RGWRados::log_list_init(const string& prefix, RGWAccessHandle *handle)
     delete state;
     return r;
   }
-  state->prefix = prefix;
+  state->filter = filter;
+  state->filter_by_date = filter_by_date;
   state->obit = state->io_ctx.nobjects_begin();
   *handle = (RGWAccessHandle)state;
   return 0;
@@ -4281,11 +4283,17 @@ int RGWRados::log_list_next(RGWAccessHandle handle, string *name)
       delete state;
       return -ENOENT;
     }
-    if (state->prefix.length() &&
-	state->obit->get_oid().find(state->prefix) != 0) {
+    // date format like '2017-03-23' is a valide bucket name,so we need to match date 
+    // at the begging.
+    if (state->filter.length() &&
+       ((state->filter_by_date && (state->obit->get_oid().find(state->filter) != 0)) ||
+        (!state->filter_by_date && (state->obit->get_oid().find(state->filter) == std::string::npos))
+       ))
+    {
       state->obit++;
       continue;
     }
+
     *name = state->obit->get_oid();
     state->obit++;
     break;
