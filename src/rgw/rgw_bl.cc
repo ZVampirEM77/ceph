@@ -189,19 +189,44 @@ static string generate_target_object(const string prefix, string obj_name)
   return target_object;
 }
 
-int RGWBL::bucket_bl_fetch(const string opslog_obj, bufferlist *opslog_entries)
+int RGWBL::bucket_bl_fetch(const string opslog_obj, bufferlist *buffer)
 {
   RGWAccessHandle sh;
   int r = store->log_show_init(opslog_obj, &sh);
   if (r < 0) {
     ldout(cct, 0) << __func__ << "log_show_init() failed ret="
-		  << cpp_strerror(-r) << dendl;
+                 << cpp_strerror(-r) << dendl;
   }
 
-  return r;
+  struct rgw_log_entry entry;
+  r = store->log_show_next(sh, &entry);
+  if (r < 0) {
+    ldout(cct, 0) << __func__ << "log_show_next() failed ret="
+		  << cpp_strerror(-r) << dendl;
+    return r;
+  }
+
+  do {
+    format_opslog_entry(entry, buffer);
+    r = store->log_show_next(sh, &entry);
+  } while (r > 0);
+
+  return 0;
 } 
 
-int RGWBL::bucket_bl_upload(bufferlist* opslog_entries, const string target_bucket,
+void RGWBL::format_opslog_entry(struct rgw_log_entry& entry, bufferlist *buffer)
+{
+  std::string row_separator = " ";
+  std::string newliner = "\n";
+  std::stringstream pending_column;
+
+  pending_column << entry.bucket << row_separator;
+  pending_column << newliner;
+
+  buffer->append(pending_column.str());
+}
+
+int RGWBL::bucket_bl_upload(bufferlist* opslog_buffer, const string target_bucket,
 			    const string target_object)
 {
   int r = 0;
@@ -223,21 +248,22 @@ int RGWBL::bucket_bl_remove(const string obj_name)
 int RGWBL::bucket_bl_deliver(string opslog_obj, const string target_bucket,
 			     const string target_prefix)
 {
-  string target_object = generate_target_object(target_prefix, opslog_obj);
-  if (target_object.empty()) {
-    ldout(cct, 0) << __func__ << "generate target object failed ret=" << dendl;
-    return -1;
-  }
-
-  bufferlist opslog_entries;
-  int r = bucket_bl_fetch(opslog_obj, &opslog_entries);
+  bufferlist opslog_buffer;
+  int r = bucket_bl_fetch(opslog_obj, &opslog_buffer);
   if (r < 0) {
     ldout(cct, 0) << __func__ << "bucket_bl_fetch() failed ret="
 		  << cpp_strerror(-r) << dendl;
     return r;
   }
 
-  r = bucket_bl_upload(&opslog_entries, target_bucket, target_object);
+  string target_object = generate_target_object(target_prefix, opslog_obj);
+  if (target_object.empty()) {
+    ldout(cct, 0) << __func__ << "generate target object failed ret=" << dendl;
+    return -1;
+  }
+
+  r = bucket_bl_upload(&opslog_buffer, target_bucket, target_object);
+  opslog_buffer.clear();
   if (r < 0) {
     ldout(cct, 0) << __func__ << "bucket_bl_upload() failed ret="
 		  << cpp_strerror(-r) << dendl;
@@ -316,9 +342,9 @@ int RGWBL::bucket_bl_process(string& shard_id)
 
     string tbucket = status.get_target_bucket();
     if (tbucket.empty()) {
-      tbucket = sbucket_name; // source bucket as default when target bucket didn't specified.
+      tbucket = sbucket_name; // source bucket as the default when target bucket didn't be specified.
     } else {
-      // FIXME check tbucket deliver group acl
+      // TODO(jiaying) check tbucket deliver group acl
     }
     string tprefix = status.get_target_prefix(); // prefix is optional
 
