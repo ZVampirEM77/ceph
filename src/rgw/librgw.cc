@@ -448,6 +448,7 @@ namespace rgw {
 
     store = RGWStoreManager::get_storage(g_ceph_context,
 					 g_conf->rgw_enable_gc_threads,
+					 g_conf->rgw_enable_bl_threads,
 					 g_conf->rgw_enable_quota_threads,
 					 g_conf->rgw_run_sync_thread);
 

@@ -82,6 +82,8 @@
     gc list                    dump expired garbage collection objects (specify
                                --include-all to list all entries, including unexpired)
     gc process                 manually process garbage
+    bl list                    list all bucket logging deliver progress
+    bl process                 deliver bucket logging manually
     metadata get               get metadata info
     metadata put               put metadata info
     metadata rm                remove metadata info
