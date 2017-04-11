@@ -71,6 +71,7 @@ void RGWOp_User_Create::execute()
   bool gen_key;
   bool suspended;
   bool system;
+  bool bl_deliver;
   bool exclusive;
 
   int32_t max_buckets;
@@ -91,10 +92,17 @@ void RGWOp_User_Create::execute()
   RESTArgs::get_bool(s, "suspended", false, &suspended);
   RESTArgs::get_int32(s, "max-buckets", default_max_buckets, &max_buckets);
   RESTArgs::get_bool(s, "system", false, &system);
+  RESTArgs::get_bool(s, "bl_deliver", false, &bl_deliver);
   RESTArgs::get_bool(s, "exclusive", false, &exclusive);
 
   if (!s->user->system && system) {
     ldout(s->cct, 0) << "cannot set system flag by non-system user" << dendl;
+    http_ret = -EINVAL;
+    return;
+  }
+
+  if (!s->user->system && bl_deliver) {
+    ldout(s->cct, 0) << "cannot set bl_deliver flag by non-system user" << dendl;
     http_ret = -EINVAL;
     return;
   }
@@ -136,6 +144,9 @@ void RGWOp_User_Create::execute()
 
   if (s->info.args.exists("system"))
     op_state.set_system(system);
+
+  if (s->info.args.exists("bl_deliver"))
+    op_state.set_bl_deliver(bl_deliver);
 
   if (s->info.args.exists("exclusive"))
     op_state.set_exclusive(exclusive);
@@ -204,6 +215,7 @@ void RGWOp_User_Modify::execute()
   bool gen_key;
   bool suspended;
   bool system;
+  bool bl_deliver;
 
   int32_t max_buckets;
 
@@ -223,9 +235,16 @@ void RGWOp_User_Modify::execute()
   RESTArgs::get_string(s, "key-type", key_type_str, &key_type_str);
 
   RESTArgs::get_bool(s, "system", false, &system);
+  RESTArgs::get_bool(s, "bl_deliver", false, &bl_deliver);
 
   if (!s->user->system && system) {
     ldout(s->cct, 0) << "cannot set system flag by non-system user" << dendl;
+    http_ret = -EINVAL;
+    return;
+  }
+
+  if (!s->user->system && bl_deliver) {
+    ldout(s->cct, 0) << "cannot set bl_deliver flag by non-system user" << dendl;
     http_ret = -EINVAL;
     return;
   }
@@ -269,6 +288,9 @@ void RGWOp_User_Modify::execute()
 
   if (s->info.args.exists("system"))
     op_state.set_system(system);
+
+  if (s->info.args.exists("bl_deliver"))
+    op_state.set_bl_deliver(bl_deliver);
 
   http_ret = RGWUserAdminOp_User::modify(store, op_state, flusher);
 }
