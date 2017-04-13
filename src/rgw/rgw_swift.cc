@@ -740,6 +740,7 @@ bool RGWSwift::verify_swift_token(RGWRados *store, req_state *s)
     if (iter != s->user->subusers.end()) {
       RGWSubUser& subuser_ = iter->second;
       s->perm_mask = subuser_.perm_mask;
+      s->subuser = subuser_.name;
     }
   } else {
     s->perm_mask = RGW_PERM_FULL_CONTROL;
