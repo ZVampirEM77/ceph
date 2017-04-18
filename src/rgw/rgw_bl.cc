@@ -162,13 +162,7 @@ static vector<string> split_shard_id(const string &s, char delim) {
   return elems;
 }
 
-static vector<string> split_opslog_obj_name(const string&obj_name){
-  vector<std::string> elems;
-  split_shard_id(obj_name, '-'); // FIXME ungly code cleanup
-  return elems;
-}
-
-static string generate_target_key(CephContext *cct, const string prefix, string obj_name)
+static string render_target_key(CephContext *cct, const string prefix, string obj_name)
 {
   string target_key;
 
@@ -178,20 +172,23 @@ static string generate_target_key(CephContext *cct, const string prefix, string 
   if (ret < 0) {
       return target_key;
   } else {
-    vector<std::string> _result;
-
-    ldout(cct, 20) << "RGWBL::generate_target_key "<< "prefix=" << prefix 
-                   << " obj_name=" << obj_name << dendl;
-    _result = split_opslog_obj_name(obj_name);
-    string date = _result[0];
+    string unique_str = string(unique_string_buf);
+    string date = obj_name.substr(0, 13); // TODO(jiaying) need more accurate time interval to match
+                                          // timestamp in s3 BL log file name.
 
     target_key += prefix;
     target_key += date;
     target_key += "-";
-    target_key += string(unique_string_buf);
+    target_key += unique_str;
+
+    ldout(cct, 20) << "RGWBL::render_target_key "<< "prefix=" << prefix
+                   << " obj_name=" << obj_name
+                   << " unique_str=" << unique_str
+                   << " target_key=" << target_key << dendl;
+
+    return target_key;
   }
 
-  return target_key;
 }
 
 int RGWBL::bucket_bl_fetch(const string opslog_obj, bufferlist *buffer)
@@ -316,13 +313,13 @@ int RGWBL::bucket_bl_deliver(string opslog_obj, const rgw_bucket target_bucket,
   }
 
   if (opslog_buffer.length() == 0) {
-    ldout(cct, 0) << __func__ << "bucket_bl_fetch has no entries" << dendl;
+    ldout(cct, 0) << __func__ << " bucket_bl_fetch has no entries" << dendl;
     return 0;
   }
 
-  string target_key = generate_target_key(cct, target_prefix, opslog_obj);
+  string target_key = render_target_key(cct, target_prefix, opslog_obj);
   if (target_key.empty()) {
-    ldout(cct, 0) << __func__ << "generate target object failed ret=" << dendl;
+    ldout(cct, 0) << __func__ << " render target object failed ret=" << dendl;
     return -1;
   }
 
@@ -331,7 +328,7 @@ int RGWBL::bucket_bl_deliver(string opslog_obj, const rgw_bucket target_bucket,
   r = bucket_bl_upload(&opslog_buffer, tobject);
   opslog_buffer.clear();
   if (r < 0) {
-    ldout(cct, 0) << __func__ << "bucket_bl_upload() failed ret="
+    ldout(cct, 0) << __func__ << " bucket_bl_upload() failed ret="
 		  << cpp_strerror(-r) << dendl;
     return r;
   } else {
@@ -406,7 +403,7 @@ int RGWBL::bucket_bl_process(string& shard_id)
     return 0;
   } else {
     if (ret < 0) {
-      ldout(cct, 0) << __func__ << "list_log_init() failed ret="
+      ldout(cct, 0) << __func__ << " list_log_init() failed ret="
 		    << cpp_strerror(-ret) << dendl;
       return ret;
     }

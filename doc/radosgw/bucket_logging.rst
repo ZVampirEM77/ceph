@@ -76,6 +76,3 @@ For example::
 
 Enable bucket logging deliver thread
 ------------------------------------
-
-
-
