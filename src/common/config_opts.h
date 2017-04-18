@@ -1433,7 +1433,7 @@ OPTION(rgw_enable_quota_threads, OPT_BOOL, true)
 OPTION(rgw_enable_gc_threads, OPT_BOOL, true)
 OPTION(rgw_enable_lc_threads, OPT_BOOL, true)
 OPTION(rgw_enable_bl_threads, OPT_BOOL, true)
-OPTION(rgw_bl_max_objs, OPT_INT, 32)
+OPTION(rgw_bl_max_objs, OPT_INT, 1)
 OPTION(rgw_bl_lock_max_time, OPT_INT, 60)  // total run time for a single bl processor work
 OPTION(rgw_bl_work_time, OPT_STR, "00:00-06:00") //job process bl at 00:00-06:00s
 OPTION(rgw_bl_url, OPT_STR, "http://localhost:7480") // modify according to the rgw_frontend config
