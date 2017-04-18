@@ -4087,9 +4087,10 @@ int main(int argc, char **argv)
     }
 
     if (!bucket_id.empty() && !bucket_name.empty()) {
-	filter = bucket_id;
-	filter += "-";
-	filter += bucket_name;
+      filter = bucket_id;
+      filter += "-";
+      filter += bucket_name;
+      filter_by_date = false;
     }
 
 
