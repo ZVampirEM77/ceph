@@ -3823,7 +3823,8 @@ int RGW_Auth_S3::authorize_v4(RGWRados *store, struct req_state *s, bool force_b
         case RGW_OP_ADMIN_SET_METADATA:
         case RGW_OP_SET_BUCKET_WEBSITE:
         case RGW_OP_PUT_BUCKET_POLICY:
-	  break;
+        case RGW_OP_PUT_BUCKET_LOGGING:
+          break;
         default:
           dout(10) << "ERROR: AWS4 completion for this operation NOT IMPLEMENTED" << dendl;
           return -ERR_NOT_IMPLEMENTED;
