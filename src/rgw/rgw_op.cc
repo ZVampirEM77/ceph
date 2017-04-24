@@ -1937,6 +1937,11 @@ int RGWGetBucketLocation::verify_permission()
 
 int RGWCreateBucket::verify_permission()
 {
+  if (s->user->bl_deliver) {
+    ldout(s->cct, 0) << "bl_deliver user cannot create bucket" << dendl;
+    return -EACCES;
+  }
+
   if (!rgw_user_is_authenticated(*(s->user)))
     return -EACCES;
 
