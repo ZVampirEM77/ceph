@@ -185,6 +185,7 @@ using ceph::crypto::MD5;
 #define ERR_USER_SUSPENDED       2100
 #define ERR_INTERNAL_ERROR       2200
 #define ERR_NOT_IMPLEMENTED      2201
+#define ERR_INVALID_TARGET_BUCKET_FOR_LOGGING 2202
 
 #ifndef UINT32_MAX
 #define UINT32_MAX (0xffffffffu)
