@@ -1809,7 +1809,7 @@ void RGWPutBL::pre_exec()
 
 int RGWPutBL::verify_permission()
 {
-  if (false == s->user->user_id.compare(s->bucket_owner.get_id())) {
+  if (0 != s->user->user_id.compare(s->bucket_owner.get_id())) {
     return -EACCES;
   }
 
