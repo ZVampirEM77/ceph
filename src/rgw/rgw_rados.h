@@ -987,7 +987,7 @@ struct RGWZoneParams : RGWSystemMetaObj {
     } else {
       bl_pool = rgw_bucket(name + ".rgw.bl");
     }
-    if (struct_v >= 10)
+    if (struct_v >= 7)
       ::decode(bl_deliver_key, bl);
     DECODE_FINISH(bl);
   }
