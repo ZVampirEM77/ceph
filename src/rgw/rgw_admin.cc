@@ -2387,6 +2387,7 @@ int main(int argc, const char **argv)
   std::string bucket_name, pool_name, object;
   rgw_pool pool;
   std::string date, subuser, access, format;
+  bool subuser_specified = false;
   std::string start_date, end_date;
   std::string key_type_str;
   std::string period_id, period_epoch, remote, url;
@@ -2535,6 +2536,8 @@ int main(int argc, const char **argv)
       access_key = val;
     } else if (ceph_argparse_witharg(args, i, &val, "--subuser", (char*)NULL)) {
       subuser = val;
+      if (subuser.empty())
+        subuser_specified = true;
     } else if (ceph_argparse_witharg(args, i, &val, "--secret", "--secret-key", (char*)NULL)) {
       secret_key = val;
     } else if (ceph_argparse_witharg(args, i, &val, "-e", "--email", (char*)NULL)) {
@@ -5206,7 +5209,8 @@ next:
       }
     }
 
-    ret = RGWUsage::trim(store, user_id, subuser, start_epoch, end_epoch);
+    ret = RGWUsage::trim(store, user_id, subuser, start_epoch, end_epoch,
+                         subuser_specified);
     if (ret < 0) {
       cerr << "ERROR: trim_usage() returned ret=" << ret << std::endl;
       return 1;

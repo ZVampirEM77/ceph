@@ -4768,7 +4768,8 @@ next:
   return 0;
 }
 
-int RGWRados::trim_usage(rgw_user& user, string& subuser, uint64_t start_epoch, uint64_t end_epoch)
+int RGWRados::trim_usage(rgw_user& user, string& subuser, uint64_t start_epoch, uint64_t end_epoch
+                         bool subuser_specified = false)
 {
   uint32_t index = 0;
   string hash, first_hash;
@@ -4778,7 +4779,8 @@ int RGWRados::trim_usage(rgw_user& user, string& subuser, uint64_t start_epoch, 
   hash = first_hash;
 
   do {
-    int ret =  cls_obj_usage_log_trim(hash, user_str, subuser, start_epoch, end_epoch);
+    int ret =  cls_obj_usage_log_trim(hash, user_str, subuser, start_epoch, end_epoch
+                                      subuser_specified);
     if (ret == -ENOENT)
       goto next;
 
