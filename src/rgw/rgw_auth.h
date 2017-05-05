@@ -66,7 +66,7 @@ public:
 
   virtual const boost::optional<std::string> get_subuser_name() const {
     return boost::none;
-  };
+  }
 };
 
 inline std::ostream& operator<<(std::ostream& out,

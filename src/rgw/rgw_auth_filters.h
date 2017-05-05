@@ -84,6 +84,11 @@ public:
     get_decoratee().to_str(out);
   }
 
+  const boost::optional<std::string> get_subuser_name() const override
+  {
+    return get_decoratee().get_subuser_name();
+  }
+
   void load_acct_info(RGWUserInfo& user_info) const override {  /* out */
     return get_decoratee().load_acct_info(user_info);
   }
