@@ -3522,7 +3522,7 @@ static int rgw_cls_bl_get_next_entry(cls_method_context_t hctx, bufferlist *in, 
   try {
     ::decode(op, in_iter);
   } catch (buffer::error& err) {
-    CLS_LOG(1, "ERROR: rgw_cls_bl_get_next_entry(): failed to decode entry\n");
+    CLS_LOG(1, "ERROR: rgw_cls_bl_get_next_entry(): failed to decode op\n");
     return -EINVAL;
   }
 
@@ -3555,7 +3555,7 @@ static int rgw_cls_bl_list_entries(cls_method_context_t hctx, bufferlist *in, bu
   try {
     ::decode(op, in_iter);
   } catch (buffer::error& err) {
-    CLS_LOG(1, "ERROR: rgw_cls_bl_list_entries(): failed to decode entry\n");
+    CLS_LOG(1, "ERROR: rgw_cls_bl_list_entries(): failed to decode op\n");
     return -EINVAL;
   }
   cls_rgw_bl_list_entries_ret op_ret;
