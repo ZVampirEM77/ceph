@@ -229,9 +229,9 @@ static void log_usage(struct req_state *s, const string& op_name)
 
   if(s->cct->_conf->rgw_enable_usage_log_at_subuser_level) {
     const auto subuser = s->auth.identity->get_subuser_name();
-
-    if (subuser) {
-      string subuser_name = *subuser;
+    
+    string subuser_name = *subuser;
+    if (!subuser_name.empty()) {
       ldout(s->cct, 5) << "usage log subuser entry: " << subuser_name << dendl;
       rgw_usage_log_entry sentry(u, p, bucket_name, subuser_name);
       sentry.add(op_name, data);
