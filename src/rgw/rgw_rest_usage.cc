@@ -73,6 +73,8 @@ void RGWOp_Usage_Delete::execute() {
   string uid_str;
   string subuser_str;
   uint64_t start, end;
+  bool subuser_specified = false;
+  bool remove_all = false;
 
   RESTArgs::get_string(s, "uid", uid_str, &uid_str);
   rgw_user uid(uid_str);
@@ -84,7 +86,6 @@ void RGWOp_Usage_Delete::execute() {
   if (uid.empty() &&
       !start &&
       end == (uint64_t)-1) {
-    bool remove_all;
     RESTArgs::get_bool(s, "remove-all", false, &remove_all);
     if (!remove_all) {
       http_ret = -EINVAL;
@@ -92,7 +93,12 @@ void RGWOp_Usage_Delete::execute() {
     }
   }
 
-  http_ret = RGWUsage::trim(store, uid, subuser_str, start, end);
+  if (subuser_str.empty())
+  {
+    RESTArgs::get_bool(s, "all-subuser", false, &subuser_specified);
+  }
+
+  http_ret = RGWUsage::trim(store, uid, subuser_str, start, end, remove_all, subuser_specified);
 }
 
 RGWOp *RGWHandler_Usage::op_get()

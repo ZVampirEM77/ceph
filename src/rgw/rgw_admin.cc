@@ -193,6 +193,7 @@ void _usage()
   cout << "   --tenant=<tenant>         tenant name\n";
   cout << "   --uid=<id>                user id\n";
   cout << "   --subuser=<name>          subuser name\n";
+  cout << "   --all-subuser   trim all subuser's usage log\n";
   cout << "   --access-key=<key>        S3 access key\n";
   cout << "   --email=<email>\n";
   cout << "   --secret/--secret-key=<key>\n";
@@ -2387,6 +2388,7 @@ int main(int argc, const char **argv)
   std::string bucket_name, pool_name, object;
   rgw_pool pool;
   std::string date, subuser, access, format;
+  int all_subuser = false;
   bool subuser_specified = false;
   std::string start_date, end_date;
   std::string key_type_str;
@@ -2848,6 +2850,8 @@ int main(int argc, const char **argv)
       perm_policy_doc = val;
     } else if (ceph_argparse_witharg(args, i, &val, "--path-prefix", (char*)NULL)) {
       path_prefix = val;
+    } else if (ceph_argparse_binary_flag(args, i, &all_subuser, NULL, "--all-subuser", (char*)NULL)) {
+      subuser_specified = true;
     } else if (strncmp(*i, "-", 1) == 0) {
       cerr << "ERROR: invalid flag " << *i << std::endl;
       return EINVAL;
@@ -5183,7 +5187,7 @@ next:
   }
 
   if (opt_cmd == OPT_USAGE_TRIM) {
-    if (user_id.empty() && !yes_i_really_mean_it) {
+    if (user_id.empty() && !yes_i_really_mean_it && !subuser_specified) {
       cerr << "usage trim without user specified will remove *all* users data" << std::endl;
       cerr << "do you really mean it? (requires --yes-i-really-mean-it)" << std::endl;
       return 1;
@@ -5210,7 +5214,7 @@ next:
     }
 
     ret = RGWUsage::trim(store, user_id, subuser, start_epoch, end_epoch,
-                         subuser_specified);
+                         yes_i_really_mean_it, subuser_specified);
     if (ret < 0) {
       cerr << "ERROR: trim_usage() returned ret=" << ret << std::endl;
       return 1;
