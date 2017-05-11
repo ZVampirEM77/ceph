@@ -3347,7 +3347,7 @@ public:
 			     uint32_t max_entries, string& read_iter,
 			     map<rgw_user_bucket, rgw_usage_log_entry>& usage,
 			     bool *is_truncated);
-  int cls_obj_usage_log_trim(string& oid, string& user, string& subuser, uint64_t start_epoch, uint64_t end_epoch
+  int cls_obj_usage_log_trim(string& oid, string& user, string& subuser, uint64_t start_epoch, uint64_t end_epoch,
                              bool subuser_specified);
 
   int key_to_shard_id(const string& key, int max_shards);
