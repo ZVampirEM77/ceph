@@ -4311,8 +4311,10 @@ int RGWGetACLs::verify_permission()
   } else {
     perm = verify_bucket_permission(s, rgw::IAM::s3GetObjectAcl);
   }
-  if (!perm)
+  if (!perm) {
+    s->err.message = "Access Denied";
     return -EACCES;
+  }
 
   return 0;
 }
