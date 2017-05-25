@@ -690,6 +690,7 @@ protected:
   size_t len;
   char *data;
   string cookie;
+  RGWBucketLoggingStatus bl_status;
 
 public:
   RGWPutBL() {

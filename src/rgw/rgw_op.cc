@@ -2197,6 +2197,9 @@ void RGWPutBL::execute()
     op_ret = -ERR_MALFORMED_XML;
     return;
   }
+ 
+  bl_status.enabled.target_bucket_specified = status->enabled.target_bucket_specified; 
+  bl_status.enabled.target_prefix_specified = status->enabled.target_prefix_specified;
 
   if (status->is_enabled()) {
      if (!status->enabled.target_bucket_specified) {
@@ -2213,6 +2216,8 @@ void RGWPutBL::execute()
        s->err.message = "The target bucket for logging does not exist";
        return;
      }
+ 
+     bl_status.enabled.set_target_bucket(tbucket_name);
 
      if (!status->enabled.target_prefix_specified) {
        ldout(s->cct, 0) << "PutBL TargetPrefix should be specified." << dendl;
@@ -2256,7 +2261,7 @@ void RGWPutBL::execute()
            if (aiter == tbucket_attrs.end()) {
                ldout(s->cct, 0) << __func__ << " can't find tbucket ACL attr"
 	                        << " tbucket_name=" << tbucket_name << dendl;
-	       op_ret = -ERR_INVALID_TARGET_BUCKET_FOR_LOGGING;
+               op_ret = -ERR_INVALID_TARGET_BUCKET_FOR_LOGGING;
                s->err.message = "You must give the log-delivery group WRITE and READ_ACP permissions to the target bucket";
                return;
            } else {
