@@ -382,6 +382,7 @@ int rgw_log_op(RGWRados *store, struct req_state *s, const string& op_name, OpsL
 
   entry.error_code = s->err.s3_code;
   entry.bucket_id = bucket_id;
+  entry.request_id = s->trans_id;
 
   bufferlist bl;
   ::encode(entry, bl);
