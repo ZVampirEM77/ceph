@@ -4167,6 +4167,10 @@ int RGWRados::init_complete()
   if (ret < 0)
     return ret;
 
+  ret = open_log_pool_ctx();
+  if (ret < 0)
+    return ret;
+
   pools_initialized = true;
 
   gc = new RGWGC();
@@ -4427,6 +4431,11 @@ int RGWRados::open_bl_pool_ctx()
 int RGWRados::open_objexp_pool_ctx()
 {
   return rgw_init_ioctx(get_rados_handle(), get_zone_params().log_pool, objexp_pool_ctx, true);
+}
+
+int RGWRados::open_log_pool_ctx()
+{
+  return rgw_init_ioctx(get_rados_handle(), get_zone_params().log_pool, log_pool_ctx, true);
 }
 
 int RGWRados::init_watch()
