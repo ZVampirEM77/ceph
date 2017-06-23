@@ -3793,6 +3793,10 @@ int RGWRados::init_complete()
   if (ret < 0)
     return ret;
 
+  ret = open_log_pool_ctx();
+  if (ret < 0)
+    return ret;
+
   pools_initialized = true;
 
   gc = new RGWGC();
@@ -4080,6 +4084,24 @@ int RGWRados::open_objexp_pool_ctx()
     }
 
     r = rad->ioctx_create(pool_name, objexp_pool_ctx);
+  }
+
+  return r;
+}
+
+int RGWRados::open_log_pool_ctx()
+{
+  const char *log_pool = get_zone_params().log_pool.name.c_str();
+  librados::Rados *rad = get_rados_handle();
+  int r = rad->ioctx_create(log_pool, log_pool_ctx);
+  if (r == -ENOENT) {
+    r = rad->pool_create(log_pool);
+    if (r == -EEXIST)
+      r = 0;
+    if (r < 0)
+      return r;
+
+    r = rad->ioctx_create(log_pool, log_pool_ctx);
   }
 
   return r;

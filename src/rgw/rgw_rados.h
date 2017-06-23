@@ -1782,6 +1782,7 @@ class RGWRados
   int open_gc_pool_ctx();
   int open_bl_pool_ctx();
   int open_objexp_pool_ctx();
+  int open_log_pool_ctx();
 
   int open_pool_ctx(const string& pool, librados::IoCtx&  io_ctx);
   int open_bucket_index_ctx(rgw_bucket& bucket, librados::IoCtx&  index_ctx);
@@ -1884,6 +1885,7 @@ protected:
   librados::IoCtx gc_pool_ctx;        // .rgw.gc
   librados::IoCtx bl_pool_ctx;        // .rgw.bl
   librados::IoCtx objexp_pool_ctx;
+  librados::IoCtx log_pool_ctx;
 
   bool pools_initialized;
 
@@ -1933,6 +1935,11 @@ public:
   librados::IoCtx* get_bl_pool_ctx() {
     return &bl_pool_ctx;
   }
+
+  librados::IoCtx* get_log_pool_ctx() {
+    return &log_pool_ctx;
+  }
+
   void set_context(CephContext *_cct) {
     cct = _cct;
   }
