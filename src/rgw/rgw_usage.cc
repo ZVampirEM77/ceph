@@ -71,6 +71,9 @@ int RGWUsage::show(RGWRados *store, rgw_user& uid, uint64_t start_epoch,
       const rgw_user_bucket& ub = iter->first;
       const rgw_usage_log_entry& entry = iter->second;
 
+      if (entry.usage_map.empty())
+        continue;
+
       if (show_log_entries) {
         if (ub.user.compare(last_owner) != 0) {
           if (user_section_open) {

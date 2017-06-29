@@ -216,21 +216,26 @@ static void log_usage(struct req_state *s, const string& op_name)
   if (!error)
     data.successful_ops = 1;
 
-  string u = user.to_str();
-  string p = payer.to_str();
+  std::string o = user.to_str();
 
-  if (!u.empty() && s->cct->_conf->rgw_enable_usage_log_at_subuser_level) {
-    const auto subuser = s->subuser;
-    if (!(subuser.empty())) {
-      ldout(s->cct, 10) << "subuser usage log subuser=" << subuser << dendl;
-      rgw_usage_log_entry sentry(u, p, bucket_name);
-      utime_t sts = ceph_clock_now(s->cct);
-      sentry.add(subuser, op_name, data);
-      usage_logger->insert(sts, sentry);
+  if (s->user && s->cct->_conf->rgw_enable_usage_log_at_subuser_level) {
+    const rgw_user& spayer = s->user->user_id;
+    std::string sp = spayer.to_str();
+
+    if (!sp.empty()) {
+      const auto subuser = s->subuser;
+      if (!(subuser.empty())) {
+        ldout(s->cct, 10) << "subuser usage log subuser=" << subuser << dendl;
+        rgw_usage_log_entry sentry(o, sp, bucket_name);
+        sentry.add(subuser, op_name, data);
+        utime_t sts = ceph_clock_now(s->cct);
+        usage_logger->insert(sts, sentry);
+      }
     }
-  } 
+  }
 
-  rgw_usage_log_entry entry(u, p, bucket_name);
+  std::string p = payer.to_str();
+  rgw_usage_log_entry entry(o, p, bucket_name);
   entry.add(op_name, data);
 
   utime_t ts = ceph_clock_now(s->cct);
