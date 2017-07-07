@@ -5,6 +5,7 @@
 #define CEPH_RGW_REST_H
 
 #define TIME_BUF_SIZE 128
+#define BL_REQ_DATA_MAX_SIZE    1048576   // default request data max size is 1MB(1 * 1024 * 1024)
 
 #include "common/ceph_json.h"
 #include "include/assert.h" /* needed because of common/ceph_json.h */

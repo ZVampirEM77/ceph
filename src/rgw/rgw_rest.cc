@@ -799,6 +799,9 @@ int RGWPutBL_ObjStore::get_params()
   if (s->length)
     cl = atoll(s->length);
   if (cl) {
+    if (cl > (size_t)BL_REQ_DATA_MAX_SIZE) {
+      return -ERANGE;
+    }
     data = (char *)malloc(cl + 1);
     if (!data) {
        op_ret = -ENOMEM;
@@ -807,9 +810,11 @@ int RGWPutBL_ObjStore::get_params()
 
     int read_len;
     int r = STREAM_IO(s)->read(data, cl, &read_len, s->aws4_auth_needs_complete);
-    len = read_len;
-    if (r < 0)
+    if (r < 0) {
+      free(data);
       return r;
+    }
+    len = read_len;
     data[len] = '\0';
   } else {
     len = 0;
