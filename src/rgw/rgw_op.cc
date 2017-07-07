@@ -1846,8 +1846,18 @@ void RGWPutBL::execute()
   }
 
   op_ret = get_params();
-  if (op_ret < 0)
+  if (op_ret < 0) {
+    if (op_ret == -ERANGE) {
+      ldout(s->cct, 4) << "RGWPutBL::" << __func__
+                       << " The size of request xml data is larger than the max limitation, data size = "
+                       << s->length << dendl;
+      op_ret = -ERR_MALFORMED_XML;
+      s->err.message = "The XML you provided was larger than the maximum " +
+                       std::to_string(BL_REQ_DATA_MAX_SIZE) +
+                       " bytes allowed.";
+    }
     return;
+  }
 
   ldout(s->cct, 15) << "read len=" << len << " data=" << (data ? data : "") << dendl;
 
