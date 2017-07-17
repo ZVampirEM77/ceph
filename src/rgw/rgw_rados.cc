@@ -4282,10 +4282,16 @@ struct log_list_state {
 
 int RGWRados::log_list_init(const string& filter, RGWAccessHandle *handle, const bool filter_by_date)
 {
+  return log_list_init(filter, handle, get_zone_params().log_pool, filter_by_date);
+}
+
+int RGWRados::log_list_init(const string& filter, RGWAccessHandle *handle, rgw_bucket& pool,
+                            const bool filter_by_date)
+{
   log_list_state *state = new log_list_state;
-  const char *log_pool = get_zone_params().log_pool.name.c_str();
+  const char *pool_name = pool.name.c_str();
   librados::Rados *rad = get_rados_handle();
-  int r = rad->ioctx_create(log_pool, state->io_ctx);
+  int r = rad->ioctx_create(pool_name, state->io_ctx);
   if (r < 0) {
     delete state;
     return r;
@@ -4325,10 +4331,15 @@ int RGWRados::log_list_next(RGWAccessHandle handle, string *name)
 
 int RGWRados::log_remove(const string& name)
 {
+  return log_remove(name, get_zone_params().log_pool);
+}
+
+int RGWRados::log_remove(const string& name, rgw_bucket& pool)
+{
   librados::IoCtx io_ctx;
-  const char *log_pool = get_zone_params().log_pool.name.c_str();
+  const char *pool_name = pool.name.c_str();
   librados::Rados *rad = get_rados_handle();
-  int r = rad->ioctx_create(log_pool, io_ctx);
+  int r = rad->ioctx_create(pool_name, io_ctx);
   if (r < 0)
     return r;
   return io_ctx.remove(name);
@@ -4346,10 +4357,15 @@ struct log_show_state {
 
 int RGWRados::log_show_init(const string& name, RGWAccessHandle *handle)
 {
+  return log_show_init(name, handle, get_zone_params().log_pool);
+}
+
+int RGWRados::log_show_init(const string& name, RGWAccessHandle *handle, rgw_bucket& pool)
+{
   log_show_state *state = new log_show_state;
-  const char *log_pool = get_zone_params().log_pool.name.c_str();
+  const char *pool_name = pool.name.c_str();
   librados::Rados *rad = get_rados_handle();
-  int r = rad->ioctx_create(log_pool, state->io_ctx);
+  int r = rad->ioctx_create(pool_name, state->io_ctx);
   if (r < 0) {
     delete state;
     return r;

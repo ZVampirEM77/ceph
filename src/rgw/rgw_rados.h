@@ -2098,13 +2098,17 @@ public:
 
   /// list logs
   int log_list_init(const string& filter, RGWAccessHandle *handle, const bool filter_by_date=false);
+  int log_list_init(const string& filter, RGWAccessHandle *handle, rgw_bucket &pool,
+                    const bool filter_by_date=false);
   int log_list_next(RGWAccessHandle handle, string *name);
 
   /// remove log
   int log_remove(const string& name);
+  int log_remove(const string& name, rgw_bucket &pool);
 
   /// show log
   int log_show_init(const string& name, RGWAccessHandle *handle);
+  int log_show_init(const string& name, RGWAccessHandle *handle, rgw_bucket& pool);
   int log_show_next(RGWAccessHandle handle, rgw_log_entry *entry);
 
   // log bandwidth info
