@@ -1261,9 +1261,8 @@ OPTION(rgw_enable_gc_threads, OPT_BOOL, true)
  */
 OPTION(rgw_enable_bl_threads, OPT_BOOL, true)
 
-OPTION(rgw_bl_max_objs, OPT_INT, 32)
+OPTION(rgw_bl_max_objs, OPT_INT, 256)
 
-OPTION(rgw_bl_lock_max_time, OPT_INT, 60)  // total run time for a single bl processor work
 OPTION(rgw_bl_work_time, OPT_STR, "00:00-06:00") //job process bl at 00:00-06:00s
 /**
  * bl thread need to upload opslog by sending http put requests to itself
@@ -1274,7 +1273,7 @@ OPTION(rgw_bl_work_time, OPT_STR, "00:00-06:00") //job process bl at 00:00-06:00
  * according to the rgw_frontends config option.
  */
 OPTION(rgw_bl_url, OPT_STR, "http://localhost:7480")
-OPTION(rgw_bl_debug_interval, OPT_INT, -1)  // debug run interval, in seconds
+OPTION(rgw_bl_deliver_interval, OPT_INT, 3600 * 24)  // deliver run interval, in seconds
 OPTION(rgw_bl_ops_log_lock_duration, OPT_INT, 30) // exclusive lock duration for reading/writing ops log
 OPTION(rgw_bl_max_ops_log_entries, OPT_INT, 10000)
 
