@@ -745,6 +745,16 @@ void RGWPutBL_ObjStore_S3::send_response()
       s->formatter->dump_string("BucketName", s->bucket_name);
       s->formatter->dump_string("TargetBucket", bl_status.get_target_bucket());
     }
+
+    if (bl_status.enabled.is_id_invalid) {
+      s->formatter->dump_string("ArgumentName", "CanonicalUser/ID");
+      s->formatter->dump_string("ArgumentValue", bl_status.enabled.get_invalid_id());
+    } else if (bl_status.enabled.is_emailaddress_invalid) {
+      s->formatter->dump_string("EmailAddress", bl_status.enabled.get_invalid_emailaddress());
+    } else if (bl_status.enabled.is_uri_invalid) {
+      s->formatter->dump_string("ArgumentName", "Group/URI");
+      s->formatter->dump_string("ArgumentValue", bl_status.enabled.get_invalid_uri());
+    }
     s->formatter->dump_string("RequestId", s->trans_id);
     s->formatter->dump_string("HostId", s->host_id);
     s->formatter->close_section();

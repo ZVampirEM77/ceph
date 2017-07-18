@@ -206,15 +206,25 @@ protected:
   string target_prefix;
   std::vector<BLGrant> target_grants;
 
+  std::string invalid_id;
+  std::string invalid_emailaddress;
+  std::string invalid_uri;
+
 public:
   bool target_bucket_specified;
   bool target_prefix_specified;
   bool target_grants_specified;
 
+  bool is_id_invalid;
+  bool is_emailaddress_invalid;
+  bool is_uri_invalid;
+
   BLLoggingEnabled() : cct(nullptr), status(false), target_bucket_specified(false),
-                       target_prefix_specified(false), target_grants_specified(false) {};
+                       target_prefix_specified(false), target_grants_specified(false),
+                       is_id_invalid(false), is_emailaddress_invalid(false), is_uri_invalid(false){};
   BLLoggingEnabled(CephContext *_cct) : cct(_cct), status(false), target_bucket_specified(false),
-                       target_prefix_specified(false), target_grants_specified(false) {};
+                       target_prefix_specified(false), target_grants_specified(false),
+                       is_id_invalid(false), is_emailaddress_invalid(false), is_uri_invalid(false){};
   ~BLLoggingEnabled(){};
 
   void set_true() {
@@ -241,6 +251,18 @@ public:
     return target_grants;
   }
 
+  const std::string get_invalid_id() const {
+    return invalid_id;
+  }
+
+  const std::string get_invalid_emailaddress() const {
+    return invalid_emailaddress;
+  }
+
+  const std::string get_invalid_uri() const {
+    return invalid_uri;
+  }
+
   void set_target_bucket(string _bucket) {
     target_bucket =  _bucket;
   }
@@ -251,6 +273,18 @@ public:
   
   void set_target_grants(std::vector<BLGrant> grants) {
     target_grants = grants;
+  }
+
+  void set_invalid_id(std::string _invalid_id) {
+    invalid_id = _invalid_id;
+  }
+
+  void set_invalid_emailaddress(std::string _invalid_emailaddress) {
+    invalid_emailaddress = _invalid_emailaddress;
+  }
+
+  void set_invalid_uri(std::string _invalid_uri) {
+    invalid_uri = _invalid_uri;
   }
 
   void encode(bufferlist& bl) const {

@@ -2269,6 +2269,8 @@ void RGWPutBL::execute()
              ldout(s->cct, 0) << "PutBL -- when grantee type is CanonicalUser, get user info failed!" << dendl;
              op_ret = -EINVAL;
              s->err.message = "Invalid id";
+             bl_status.enabled.is_id_invalid = true;
+             bl_status.enabled.set_invalid_id(id);
              return;
            }
          } else if (acl_grantee_type == ACL_TYPE_EMAIL_USER) {
@@ -2287,6 +2289,8 @@ void RGWPutBL::execute()
              ldout(s->cct, 0) << "PutBL -- when grantee type is AmazonCustomerByEmail, get user info failed!" << dendl;
              op_ret = -ERR_UNRESOLVABLE_EMAIL;
              s->err.message = "The e-mail address you provided does not match any account on record.";
+             bl_status.enabled.is_emailaddress_invalid = true;
+             bl_status.enabled.set_invalid_emailaddress(email_address);
              return;
            }
          } else if (acl_grantee_type == ACL_TYPE_GROUP) {
@@ -2307,6 +2311,8 @@ void RGWPutBL::execute()
              ldout(s->cct, 0) << "PutBL -- when grantee type is Group, uri is not in the pre-define groups!" << dendl;
              op_ret = -EINVAL;
              s->err.message = "Invalid group uri";
+             bl_status.enabled.is_uri_invalid = true;
+             bl_status.enabled.set_invalid_uri(group);
              return;
            }
          } else {
