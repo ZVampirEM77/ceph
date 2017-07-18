@@ -36,6 +36,7 @@
 using namespace std;
 #define BL_HASH_PRIME 7877
 #define BL_UNIQUE_STRING_LEN 16
+#define BL_DELIVER_INTERVAL 86400
 static string bl_oid_prefix = "bl";
 static string bl_index_lock_name = "bl_process";
 
@@ -74,6 +75,7 @@ class RGWBL {
 
  public:
   BLWorker *worker;
+  time_t deliver_interval;
   RGWBL() : cct(nullptr), store(nullptr), worker(nullptr) {}
   ~RGWBL() {
     stop_processor();
