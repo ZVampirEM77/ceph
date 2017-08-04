@@ -386,14 +386,16 @@ int RGWBL::bucket_bl_deliver(string opslog_obj, rgw_bucket target_bucket,
       }
 
       ldout(cct, 20) << __func__ << " render key phrase:" << dendl;
-      string target_key = render_target_key(cct, target_prefix);
+      std::string target_key = render_target_key(cct, target_prefix);
       if (target_key.empty()) {
         ldout(cct, 0) << __func__ << " render target object failed" << dendl;
         ret = -EINVAL;
         goto exit;
       }
 
-      rgw_obj tobject(target_bucket, target_key);
+      std::string tobject_name;
+      url_encode(target_key, tobject_name);
+      rgw_obj tobject(target_bucket, tobject_name);
       
       ldout(cct, 20) << __func__ << " upload phrase:" << dendl;
       int upload_ret = -1;

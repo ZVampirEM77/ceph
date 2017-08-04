@@ -38,6 +38,7 @@ const static struct rgw_http_errors RGW_HTTP_ERRORS[] = {
     { ERR_MALFORMED_XML, 400, "MalformedXML" },
     { ERR_INVALID_TARGET_BUCKET_FOR_LOGGING, 400, "InvalidTargetBucketForLogging"},
     { ERR_AMZ_CONTENT_SHA256_MISMATCH, 400, "XAmzContentSHA256Mismatch" },
+    { ERR_INVALID_PREFIX, 400, "InvalidPrefix" },
     { ERR_LENGTH_REQUIRED, 411, "MissingContentLength" },
     { EACCES, 403, "AccessDenied" },
     { EPERM, 403, "AccessDenied" },

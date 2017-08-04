@@ -1842,7 +1842,9 @@ int RGWREST::preprocess(struct req_state *s, RGWClientIO* cio)
     s->info.domain = s->cct->_conf->rgw_dns_name;
   }
 
-  url_decode(s->info.request_uri, s->decoded_uri);
+  std::string request_uri = s->info.request_uri;
+  boost::replace_all(request_uri, "+", "%20");
+  url_decode(request_uri, s->decoded_uri);
 
   /* FastCGI specification, section 6.3
    * http://www.fastcgi.com/devkit/doc/fcgi-spec.html#S6.3
