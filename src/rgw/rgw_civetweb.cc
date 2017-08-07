@@ -135,6 +135,15 @@ void RGWMongoose::init_env(CephContext *cct)
     env.set(buf, header->value);
   }
 
+  struct in_addr r_addr;
+  r_addr.s_addr = htonl(info->remote_ip);
+  char* tmp_addr = inet_ntoa(r_addr);
+  char remote_addr[48] = {0};
+  if (tmp_addr != NULL) {
+    strncpy(remote_addr, tmp_addr, sizeof(remote_addr) - 1);
+  }
+
+  env.set("REMOTE_ADDR", remote_addr);
   env.set("REQUEST_METHOD", info->request_method);
   env.set("REQUEST_URI", info->uri);
   env.set("QUERY_STRING", info->query_string);
