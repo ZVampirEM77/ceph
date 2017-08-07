@@ -204,6 +204,7 @@ using ceph::crypto::MD5;
 #define ERR_NO_ROLE_FOUND        2205
 #define ERR_DELETE_CONFLICT      2206
 #define ERR_INVALID_TARGET_BUCKET_FOR_LOGGING 2207
+#define ERR_INVALID_PREFIX       2208
 
 #ifndef UINT32_MAX
 #define UINT32_MAX (0xffffffffu)
