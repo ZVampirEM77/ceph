@@ -410,8 +410,7 @@ int rgw_log_op(RGWRados *store, struct req_state *s, const string& op_name, OpsL
   uri.append(s->info.env->get("HTTP_VERSION"));
 
   entry.uri = uri;
-
-  set_param_str(s, "REQUEST_METHOD", entry.op);
+  entry.op = op_name;
 
   entry.user = s->user->user_id.to_str();
   if (s->object_acl)
