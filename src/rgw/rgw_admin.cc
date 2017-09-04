@@ -3852,7 +3852,8 @@ int main(int argc, const char **argv)
           zonegroup.default_placement = placement_id;
         }
 
-        zonegroup.post_process_params();
+        zonegroup.post_process_params(true);
+
         ret = zonegroup.update();
         if (ret < 0) {
           cerr << "failed to update zonegroup: " << cpp_strerror(-ret) << std::endl;

@@ -1492,7 +1492,7 @@ struct RGWZoneGroup : public RGWSystemMetaObj {
     is_master = _is_master;
     post_process_params();
   }
-  void post_process_params();
+  void post_process_params(bool skip_auto_add_placement = false);
 
   void encode(bufferlist& bl) const override {
     ENCODE_START(4, 1, bl);

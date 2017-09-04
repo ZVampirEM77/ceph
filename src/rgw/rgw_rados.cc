@@ -421,7 +421,7 @@ int RGWZoneGroup::rename_zone(const RGWZoneParams& zone_params)
   return update();
 }
 
-void RGWZoneGroup::post_process_params()
+void RGWZoneGroup::post_process_params(bool skip_auto_add_placement)
 {
   bool log_data = zones.size() > 1;
 
@@ -443,13 +443,15 @@ void RGWZoneGroup::post_process_params()
       continue;
     }
 
-    for (map<string, RGWZonePlacementInfo>::iterator iter = zone_params.placement_pools.begin(); 
-         iter != zone_params.placement_pools.end(); ++iter) {
-      const string& placement_name = iter->first;
-      if (placement_targets.find(placement_name) == placement_targets.end()) {
-        RGWZoneGroupPlacementTarget placement_target;
-        placement_target.name = placement_name;
-        placement_targets[placement_name] = placement_target;
+    if (!skip_auto_add_placement) {
+      for (map<string, RGWZonePlacementInfo>::iterator iter = zone_params.placement_pools.begin();
+           iter != zone_params.placement_pools.end(); ++iter) {
+        const string& placement_name = iter->first;
+        if (placement_targets.find(placement_name) == placement_targets.end()) {
+          RGWZoneGroupPlacementTarget placement_target;
+          placement_target.name = placement_name;
+          placement_targets[placement_name] = placement_target;
+        }
       }
     }
   }
