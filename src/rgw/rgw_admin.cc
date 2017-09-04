@@ -3790,16 +3790,16 @@ int main(int argc, const char **argv)
       break;
     case OPT_ZONEGROUP_PLACEMENT_LIST:
       {
-	RGWZoneGroup zonegroup(zonegroup_id, zonegroup_name);
-	int ret = zonegroup.init(g_ceph_context, store);
-	if (ret < 0) {
-	  cerr << "failed to init zonegroup: " << cpp_strerror(-ret) << std::endl;
-	  return -ret;
-	}
+        RGWZoneGroup zonegroup(zonegroup_id, zonegroup_name);
+        int ret = zonegroup.init(g_ceph_context, store);
+        if (ret < 0) {
+          cerr << "failed to init zonegroup: " << cpp_strerror(-ret) << std::endl;
+          return -ret;
+        }
 
-	encode_json("placement_targets", zonegroup.placement_targets, formatter);
-	formatter->flush(cout);
-	cout << std::endl;
+        encode_json("placement_targets", zonegroup.placement_targets, formatter);
+        formatter->flush(cout);
+        cout << std::endl;
       }
       break;
     case OPT_ZONEGROUP_PLACEMENT_ADD:
@@ -3812,12 +3812,12 @@ int main(int argc, const char **argv)
           return EINVAL;
         }
 
-	RGWZoneGroup zonegroup(zonegroup_id, zonegroup_name);
-	int ret = zonegroup.init(g_ceph_context, store);
-	if (ret < 0) {
-	  cerr << "failed to init zonegroup: " << cpp_strerror(-ret) << std::endl;
-	  return -ret;
-	}
+        RGWZoneGroup zonegroup(zonegroup_id, zonegroup_name);
+        int ret = zonegroup.init(g_ceph_context, store);
+        if (ret < 0) {
+          cerr << "failed to init zonegroup: " << cpp_strerror(-ret) << std::endl;
+          return -ret;
+        }
 
         if (opt_cmd == OPT_ZONEGROUP_PLACEMENT_ADD) {
           RGWZoneGroupPlacementTarget target;
