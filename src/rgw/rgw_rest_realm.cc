@@ -285,7 +285,8 @@ RGWRESTMgr_Realm::RGWRESTMgr_Realm()
   register_resource("period", new RGWRESTMgr_Period);
 }
 
-RGWHandler_REST* RGWRESTMgr_Realm::get_handler(struct req_state*)
+RGWHandler_REST* RGWRESTMgr_Realm::get_handler(struct req_state* s)
 {
+  s->prot_flags |= RGW_REST_ADMIN;
   return new RGWHandler_Realm;
 }

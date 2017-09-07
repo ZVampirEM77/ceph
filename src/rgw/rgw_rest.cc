@@ -1473,7 +1473,7 @@ int RGWHandler_REST::allocate_formatter(struct req_state *s,
       s->formatter = new JSONFormatter(false);
       break;
     case RGW_FORMAT_HTML:
-      s->formatter = new HTMLFormatter(s->prot_flags & RGW_REST_WEBSITE);
+      s->formatter = new HTMLFormatter(s->prot_flags & RGW_REST_S3WEBSITE);
       break;
     default:
       return -EINVAL;
@@ -1811,7 +1811,7 @@ int RGWREST::preprocess(struct req_state *s, RGWClientIO* cio)
     }
 
     if (in_hosted_domain_s3website) {
-      s->prot_flags |= RGW_REST_WEBSITE;
+      s->prot_flags |= RGW_REST_S3WEBSITE;
     }
 
 

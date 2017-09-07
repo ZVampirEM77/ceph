@@ -325,6 +325,7 @@ public:
   virtual ~RGWRESTMgr_Log() {}
 
   virtual RGWHandler_REST* get_handler(struct req_state *s){
+    s->prot_flags |= RGW_REST_ADMIN;
     return new RGWHandler_Log;
   }
 };
