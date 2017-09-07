@@ -397,7 +397,7 @@ void dump_etag(struct req_state * const s, const char * const etag)
   }
 
   int r;
-  if (s->prot_flags & RGW_REST_SWIFT) {
+  if (s->prot_flags & (RGW_REST_SWIFT | RGW_REST_SWIFT_AUTH)) {
     r = STREAM_IO(s)->print("etag: %s\r\n", etag);
   } else {
     r = STREAM_IO(s)->print("ETag: \"%s\"\r\n", etag);
@@ -585,7 +585,7 @@ void dump_start(struct req_state *s)
 
 void dump_trans_id(req_state *s)
 {
-  if (s->prot_flags & RGW_REST_SWIFT) {
+  if (s->prot_flags & (RGW_REST_SWIFT | RGW_REST_SWIFT_AUTH)) {
     STREAM_IO(s)->print("X-Trans-Id: %s\r\n", s->trans_id.c_str());
   }
   else {
@@ -611,7 +611,8 @@ void end_header(struct req_state* s, RGWOp* op, const char *content_type,
     dump_access_control(s, op);
   }
 
-  if (s->prot_flags & RGW_REST_SWIFT && !content_type) {
+  if (s->prot_flags & (RGW_REST_SWIFT | RGW_REST_SWIFT_AUTH)
+      && !content_type) {
     force_content_type = true;
   }
 
@@ -633,7 +634,7 @@ void end_header(struct req_state* s, RGWOp* op, const char *content_type,
       ctype = "text/plain";
       break;
     }
-    if (s->prot_flags & RGW_REST_SWIFT)
+    if (s->prot_flags & (RGW_REST_SWIFT | RGW_REST_SWIFT_AUTH))
       ctype.append("; charset=utf-8");
     content_type = ctype.c_str();
   }
