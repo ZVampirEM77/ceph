@@ -28,6 +28,14 @@ PerfCounters *perfcounter = NULL;
 
 const uint32_t RGWBucketInfo::NUM_SHARDS_BLIND_BUCKET(UINT32_MAX);
 
+rgw_prot_flags_map rgw_prot_flags({
+    {RGW_REST_SWIFT, "SWIFT_REST"},
+    {RGW_REST_SWIFT_AUTH, "SWIFT_AUTH"},
+    {RGW_REST_S3, "REST"},
+    {RGW_REST_S3WEBSITE, "WEBSITE"},
+    {RGW_REST_ADMIN, "ADMIN"},
+});
+
 int rgw_perf_start(CephContext *cct)
 {
   PerfCountersBuilder plb(cct, cct->_conf->name.to_str(), l_rgw_first, l_rgw_last);
