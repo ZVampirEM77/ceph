@@ -51,6 +51,9 @@ typedef enum {
   bl_complete,
 }BL_BUCKET_STATUS;
 
+typedef std::map<std::string, std::string> rgw_ops_map;
+extern rgw_ops_map rgw_ops;
+
 class RGWBL {
   CephContext *cct;
   RGWRados *store;

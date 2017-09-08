@@ -55,6 +55,50 @@ std::map<const string, int> rgw_perm_map = boost::assign::map_list_of
       ("WRITE_ACP", RGW_PERM_WRITE_ACP)
       ("FULL_CONTROL", RGW_PERM_FULL_CONTROL);
 
+rgw_ops_map rgw_ops({
+    {"get_obj", "GET.OBJECT"},
+    {"bulk_delete", "DELETE.BULK_DELETE"},
+    {"bulk_upload", "PUT.BULK_UPLOAD"},
+    {"get_bucket_logging", "GET.LOGGING_STATUS"},
+    {"list_bucket", "GET.BUCKET"},
+    {"put_bucket_logging", "PUT.LOGGING_STATUS"},
+    {"get_bucket_location", "GET.LOCATION"},
+    {"get_bucket_versioning", "GET.BUCKETVERSIONS"},
+    {"set_bucket_versioning", "PUT.VERSIONING"},
+    {"get_bucket_website", "GET.WEBSITE"},
+    {"set_bucket_website", "PUT.WEBSITE"},
+    {"delete_bucket_website", "DELETE.WEBSITE"},
+    {"stat_bucket", "GET.STAT_BUCKET"},
+    {"delete_bucket", "DELETE.BUCKET"},
+    {"put_obj", "PUT.OBJECT"},
+    {"post_obj", "POST.OBJECT"},
+    {"put_bucket_metadata", "PUT.BUCKET_METADATA"},
+    {"put_obj_metadata", "PUT.OBJECT_METADATA"},
+    {"delete_obj", "DELETE.OBJECT"},
+    {"get_acls", "GET.ACL"},
+    {"put_acls", "PUT.ACL"},
+    {"get_lifecycle", "GET.LIFECYCLE"},
+    {"put_lifecycle", "PUT.LIFECYCLE"},
+    {"delete_lifecycle", "DELETE.LIFECYCLE"},
+    {"get_cors", "GET.CORS"},
+    {"put_cors", "PUT.CORS"},
+    {"delete_cors", "DELETE.CORS"},
+    {"options_cors", "OPTIONS.CORS"},
+    {"get_request_payment", "GET.REQUEST_PAYMENT"},
+    {"set_request_payment", "PUT.REQUEST_PAYMENT"},
+    {"multi_object_delete", "POST.MULTI_OBJECT_DELETE"},
+    {"put_bucket_policy", "PUT.BUCKETPOLICY"},
+    {"get_bucket_policy", "GET.BUCKETPOLICY"},
+    {"delete_bucket_policy", "DELETE.BUCKETPOLICY"},
+    {"set_attrs", "PUT.ATTRS"},
+    {"init_multipart", "POST.UPLOADS"},
+    {"complete_multipart", "POST.UPLOAD"},
+    {"abort_multipart", "DELETE.UPLOAD"},
+    {"list_multipart", "GET.UPLOAD"},
+    {"list_bucket_multiparts", "GET.UPLOADS"},
+    {"get_obj_layout", "GET.OBJECT_LAYOUT"},
+});
+
 void *RGWBL::BLWorker::entry() {
   utime_t end = ceph_clock_now(cct);
   do {
@@ -237,6 +281,9 @@ void RGWBL::format_opslog_entry(struct rgw_log_entry& entry, bufferlist *buffer)
   std::string error_code = entry.error_code.empty() ? "-" : entry.error_code;
   std::string referrer = entry.referrer.empty() ? "\"-\"" : ("\""+entry.referrer+"\"");
   std::string user_agent = entry.user_agent.empty() ? "\"-\"" : ("\""+entry.user_agent+"\"");
+  std::string operation = entry.op.empty() ?
+                          "-" :
+                          (rgw_prot_flags[entry.prot_flags] + "." + rgw_ops[entry.op]);
 
                                                                                // S3 BL field
   pending_column << owner_id << row_separator                                  // Bucket Owner
@@ -245,7 +292,7 @@ void RGWBL::format_opslog_entry(struct rgw_log_entry& entry, bufferlist *buffer)
                  << entry.remote_addr << row_separator                         // Remote IP
                  << user << row_separator                                      // Requester
                  << entry.request_id << row_separator                          // Request ID
-                 << entry.op << row_separator                                  // Operation
+                 << operation << row_separator                                 // Operation
                  << oname << row_separator                                     // Key
                  << uri << row_separator                                       // Request-URI
                  << entry.http_status << row_separator                         // HTTP status
