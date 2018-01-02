@@ -117,6 +117,7 @@ struct rgw_log_entry {
       ::decode(x_headers, p);
     }
     if (struct_v >= 10) {
+      ::decode(request_id, p);
       ::decode(prot_flags, p);
       ::decode(resource, p);
       ::decode(http_method, p);
