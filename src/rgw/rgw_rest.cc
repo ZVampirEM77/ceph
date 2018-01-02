@@ -466,8 +466,7 @@ void dump_etag(struct req_state* const s,
     return;
   }
 
-  if (s->prot_flags & (RGW_REST_SWIFT | RGW_REST_SWIFT_AUTH)
-      && ! quoted) {
+  if (s->prot_flags & RGW_REST_SWIFT && ! quoted) {
     return dump_header(s, "etag", etag);
   } else {
     return dump_header_quoted(s, "ETag", etag);

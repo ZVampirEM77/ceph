@@ -70,7 +70,7 @@ struct rgw_log_entry {
     ENCODE_FINISH(bl);
   }
   void decode(bufferlist::iterator &p) {
-    DECODE_START_LEGACY_COMPAT_LEN(8, 5, 5, p);
+    DECODE_START_LEGACY_COMPAT_LEN(10, 5, 5, p);
     ::decode(object_owner.id, p);
     if (struct_v > 3)
       ::decode(bucket_owner.id, p);
