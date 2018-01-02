@@ -131,6 +131,7 @@ using ceph::crypto::MD5;
 #define RGW_CAP_WRITE           0x2
 #define RGW_CAP_ALL             (RGW_CAP_READ | RGW_CAP_WRITE)
 
+#define RGW_REST_UNKNOWN        0x00
 #define RGW_REST_SWIFT          0x01
 #define RGW_REST_SWIFT_AUTH     0x02
 #define RGW_REST_S3             0x04

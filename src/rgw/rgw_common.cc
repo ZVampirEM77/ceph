@@ -136,6 +136,7 @@ rgw_http_errors rgw_http_swift_errors({
 });
 
 rgw_prot_flags_map_t rgw_prot_flags({
+    { RGW_REST_UNKNOWN, "UNKNOWN"},
     { RGW_REST_SWIFT, "SWIFT_REST" },
     { RGW_REST_SWIFT_AUTH, "SWIFT_AUTH" },
     { RGW_REST_S3, "REST" },
@@ -389,7 +390,7 @@ req_state::req_state(CephContext* _cct, RGWEnv* e, RGWUserInfo* u)
   expect_cont = false;
 
   obj_size = 0;
-  prot_flags = 0;
+  prot_flags = RGW_REST_UNKNOWN;
 
   system_request = false;
 

@@ -281,9 +281,18 @@ void rgw_format_ops_log_entry(struct rgw_log_entry& entry, Formatter *formatter)
   formatter->dump_int("total_time", total_time);
   formatter->dump_string("user_agent",  entry.user_agent);
   formatter->dump_string("referrer",  entry.referrer);
-  formatter->dump_string("prot_flags", rgw_prot_flags[entry.prot_flags]);
-  formatter->dump_string("resource", rgw_resources[entry.resource]);
-  formatter->dump_string("http_method", rgw_http_methods[entry.http_method]);
+  if (rgw_prot_flags.find(entry.prot_flags) != rgw_prot_flags.end())
+    formatter->dump_string("prot_flags", rgw_prot_flags[entry.prot_flags]);
+  else
+    formatter->dump_string("prot_flags", rgw_prot_flags[RGW_REST_UNKNOWN]);
+  if (rgw_resources.find(entry.resource) != rgw_resources.end())
+    formatter->dump_string("resource", rgw_resources[entry.resource]);
+  else
+    formatter->dump_string("resource", rgw_resources[RGW_RESOURCE_CATEGORY_NONE]);
+  if (rgw_http_methods.find(entry.http_method) != rgw_http_methods.end())
+    formatter->dump_string("http_method", rgw_http_methods[entry.http_method]);
+  else
+    formatter->dump_string("http_method", rgw_http_methods[OP_UNKNOWN]);
   if (entry.x_headers.size() > 0) {
     formatter->open_array_section("http_x_headers");
     for (const auto& iter: entry.x_headers) {
